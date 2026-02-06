@@ -1,0 +1,6 @@
+C:\Users\Vuk\Desktop\Projekat Mreze\Server\Domain\bin\Debug\Domain.dll
+C:\Users\Vuk\Desktop\Projekat Mreze\Server\Domain\bin\Debug\Domain.pdb
+C:\Users\Vuk\Desktop\Projekat Mreze\Server\Domain\obj\Debug\Domain.csproj.AssemblyReference.cache
+C:\Users\Vuk\Desktop\Projekat Mreze\Server\Domain\obj\Debug\Domain.csproj.CoreCompileInputs.cache
+C:\Users\Vuk\Desktop\Projekat Mreze\Server\Domain\obj\Debug\Domain.dll
+C:\Users\Vuk\Desktop\Projekat Mreze\Server\Domain\obj\Debug\Domain.pdb
