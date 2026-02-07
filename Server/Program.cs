@@ -23,7 +23,24 @@ namespace Server
             Socket udpServer = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             udpServer.Bind(new IPEndPoint(IPAddress.Any, 9000));
 
-           
+            
+            new Thread(() => {
+                while (true)
+                {
+                    byte[] buffer = new byte[4096];
+                    EndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
+
+                    
+                    int rec = udpServer.ReceiveFrom(buffer, ref remoteEP);
+
+                    Console.WriteLine("\nPrimljen zahtev za dodavanje novog uređaja!");
+
+                   
+                    udpServer.SendTo(buffer, 0, rec, SocketFlags.None, remoteEP);
+                }
+            }).Start();
+
+
             TcpListener tcpListener = new TcpListener(IPAddress.Any, 10000);
             tcpListener.Start();
 
@@ -38,16 +55,58 @@ namespace Server
                 while (true)
                 {
 
-                    Thread.Sleep(15000);
+                    Thread.Sleep(2000);
                     PokreniKlijenta(nextID, 11000 + nextID, $"127.0.0.{nextID}");
                     nextID++;
-                    if (nextID == 4) break;
+                    if (nextID > 4) break;
                 }
             }).Start();
 
-         
+            List<Uredjaji> uredjaji = new List<Uredjaji>();
+
             while (true)
             {
+
+                
+                if (Console.KeyAvailable)
+                {
+                    
+                    ConsoleKeyInfo taster = Console.ReadKey(true);
+
+                    
+                    if (taster.Key == ConsoleKey.U)
+                    {
+                        
+                        Console.Write("\nUnesite ID uređaja za pregled: ");
+
+                       
+                        string unos = Console.ReadLine();
+
+                        if (int.TryParse(unos, out int trazeniID))
+                        {
+                            Uredjaji pronadjen = uredjaji.Find(x => x.ID_uredjaja == trazeniID);
+
+                            if (pronadjen != null)
+                            {
+                                Console.WriteLine($"\n>>> PODACI ZA ID {trazeniID}:");
+                                Console.WriteLine($"> Tip: {pronadjen.tip_uredjaja}");
+                                Console.WriteLine($"> Status: {pronadjen.status}");
+                                Console.WriteLine($"> Opseg: {pronadjen.min_vrednost} - {pronadjen.max_vrednost}");
+                                Console.WriteLine("----------------------------------");
+                            }
+                            else
+                            {
+                                Console.WriteLine(">>> Uređaj nije u listi.");
+                            }
+                        }
+
+                        Console.WriteLine("Pritisnite bilo koji taster za nastavak polling-a...");
+                        Console.ReadKey(true); 
+                    }
+                }
+
+            
+
                 foreach (var kvp in tcpClients)
                 {
                     try
@@ -82,6 +141,9 @@ namespace Server
 
                         Poruka odgovor = (Poruka)bf.Deserialize(ns);
 
+                        uredjaji.RemoveAll(x => x.ID_uredjaja == odgovor.Uredjaj.ID_uredjaja);
+                        uredjaji.Add(odgovor.Uredjaj);
+
                         Console.WriteLine($"Uredjaj {odgovor.Uredjaj.ID_uredjaja} | Tip: {odgovor.Uredjaj.tip_uredjaja} | Min: {odgovor.Uredjaj.min_vrednost} | Max: {odgovor.Uredjaj.max_vrednost} | Status: {odgovor.Uredjaj.status}");
                         if (odgovor.Uredjaj.status == STATUS.ALARMNO_STANJE)
                         {
@@ -109,7 +171,11 @@ namespace Server
                     }
                 }
 
-                Thread.Sleep(5000);
+                for (int i = 0; i < 50; i++)
+                {
+                    if (Console.KeyAvailable) break; 
+                    Thread.Sleep(100);
+                }
             }
         }
 
@@ -127,9 +193,11 @@ namespace Server
 
                     int id = p.Uredjaj.ID_uredjaja;
 
-                    tcpClients.Add(id, client); //!!!!
-                    Console.WriteLine($"TCP povezan uređaj {id} | IP: {p.Uredjaj.ip_adresa} | Port: {p.Uredjaj.port}");
-                    
+                    tcpClients.Add(id, client);
+                    string tip = (id == 1) ? "Ručno pokrenut" : "Automatski";
+
+                    Console.WriteLine($"TCP povezan uređaj {id} [{tip}] | IP: {p.Uredjaj.ip_adresa}");
+
                 }
                 catch (Exception ex)
                 {
@@ -146,6 +214,7 @@ namespace Server
             {
                 Process p = new Process();
                 p.StartInfo.FileName = @"Klijent.exe";
+                p.StartInfo.WorkingDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 p.StartInfo.Arguments = $"{id} {port} {ip}";
                 p.Start();
 

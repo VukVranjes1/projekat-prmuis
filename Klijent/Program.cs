@@ -16,15 +16,17 @@ namespace Klijent
             int clientID = 1;
             int port = 11001;
             string ip = "127.0.0.1";
+            string tip_pokretanja = "Rucno pokrenut:";
 
             if (args.Length >= 3)
             {
                 int.TryParse(args[0], out clientID);
                 int.TryParse(args[1], out port);
                 ip = args[2];
+                tip_pokretanja = "Automatski pokrenut!";
             }
 
-            Console.WriteLine($"POKRETANJE KLIJENTA | ID: {clientID} | IP: {ip} | Port: {port}");
+            Console.WriteLine($"POKRETANJE KLIJENTA | {tip_pokretanja} ID: {clientID} | IP: {ip} | Port: {port}");
 
             Random R = new Random();
 
@@ -52,9 +54,12 @@ namespace Klijent
             Socket udp = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             Poruka cfg = new Poruka() { Tip = PorukaTip.KONFIG, Uredjaj = uredjaj };
             udp.SendTo(Serialize(cfg), new IPEndPoint(IPAddress.Loopback, 9000));
+            byte[] buffer = new byte[4096];
+            EndPoint serverEP = new IPEndPoint(IPAddress.Loopback, 9000);
+            udp.ReceiveFrom(buffer, ref serverEP);
             Console.WriteLine($"Konfiguracija poslata za uredjaj {clientID}");
 
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
 
          
             TcpClient tcp = new TcpClient();
@@ -94,7 +99,7 @@ namespace Klijent
 
                         bf.Serialize(ns, odgovor);
 
-                        Console.WriteLine($"[WRITE] Uredjaj {clientID} | Tip: {tip} | Min: {uredjaj.min_vrednost} | Max: {uredjaj.max_vrednost} | Status: {uredjaj.status}");
+                        Console.WriteLine($"Uredjaj {clientID} | Tip: {tip} | Min: {uredjaj.min_vrednost} | Max: {uredjaj.max_vrednost} | Status: {uredjaj.status}");
                     }
                     else if(zahtev.Komanda == "WRITE" && uredjaj.ulaz_izlaz == IO.IZLAZ && uredjaj.status == STATUS.ALARMNO_STANJE)
                     {
@@ -109,7 +114,7 @@ namespace Klijent
 
                     else if (zahtev.Komanda == "WRITE" && uredjaj.ulaz_izlaz == IO.ULAZ)
                     {
-                        Console.WriteLine("[WRITE] Uslov ne moze se izvrsiti jer je uredjaj ulazni");
+                        Console.WriteLine("Uslov ne moze se izvrsiti jer je uredjaj ulazni");
                     }
                     else if (zahtev.Komanda == "READ")
                     {
@@ -120,7 +125,7 @@ namespace Klijent
                         };
                         bf.Serialize(ns, odgovor);
 
-                        Console.WriteLine($"[READ]  Uredjaj {clientID} | Tip: {tip} | Min: {uredjaj.min_vrednost} | Max: {uredjaj.max_vrednost} | Status: {uredjaj.status}");
+                        Console.WriteLine($"Uredjaj {clientID} | Tip: {tip} | Min: {uredjaj.min_vrednost} | Max: {uredjaj.max_vrednost} | Status: {uredjaj.status}");
                     }
                 }
                 catch (Exception ex)
