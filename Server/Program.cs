@@ -8,11 +8,13 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
+using System.Net.NetworkInformation;
 
 namespace Server
 {
     public class Program
     {
+        static volatile bool running = true;
         static Dictionary<int, TcpClient> tcpClients = new Dictionary<int, TcpClient>();
 
         static void Main(string[] args)
@@ -25,7 +27,7 @@ namespace Server
 
             
             new Thread(() => {
-                while (true)
+                while (running)
                 {
                     byte[] buffer = new byte[4096];
                     EndPoint remoteEP = new IPEndPoint(IPAddress.Any, 0);
@@ -52,7 +54,7 @@ namespace Server
             new Thread(() =>
             {
                 int nextID = 2;
-                while (true)
+                while (running)
                 {
 
                     Thread.Sleep(2000);
@@ -64,7 +66,7 @@ namespace Server
 
             List<Uredjaji> uredjaji = new List<Uredjaji>();
 
-            while (true)
+            while (running)
             {
 
                 
@@ -103,6 +105,14 @@ namespace Server
                         Console.WriteLine("Pritisnite bilo koji taster za nastavak polling-a...");
                         Console.ReadKey(true); 
                     }
+                    if (taster.Key == ConsoleKey.Escape)
+                    {
+                        Console.WriteLine("Zatvaranje servera...");
+                        running = false;
+                        break;
+                    }
+                    
+                   
                 }
 
             
@@ -177,11 +187,14 @@ namespace Server
                     Thread.Sleep(100);
                 }
             }
+
+            tcpListener.Stop();
+            udpServer.Close();
         }
 
         static void AcceptTCPClients(TcpListener tcpListener)
         {
-            while (true)
+            while (running)
             {
                 try
                 {
@@ -204,6 +217,7 @@ namespace Server
                     Console.WriteLine("AcceptTCPClients exception: " + ex.Message);
                 }
             }
+            
         }
 
        
