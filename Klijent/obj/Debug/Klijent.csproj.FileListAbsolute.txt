@@ -8,3 +8,13 @@ C:\Users\Vuk\Desktop\Projekat Mreze\Server\Klijent\obj\Debug\Klijent.csproj.Core
 C:\Users\Vuk\Desktop\Projekat Mreze\Server\Klijent\obj\Debug\Klijent.csproj.Up2Date
 C:\Users\Vuk\Desktop\Projekat Mreze\Server\Klijent\obj\Debug\Klijent.exe
 C:\Users\Vuk\Desktop\Projekat Mreze\Server\Klijent\obj\Debug\Klijent.pdb
+C:\Users\Vuk\Desktop\PROJEKAAAAT\Klijent\bin\Debug\Klijent.exe.config
+C:\Users\Vuk\Desktop\PROJEKAAAAT\Klijent\bin\Debug\Klijent.exe
+C:\Users\Vuk\Desktop\PROJEKAAAAT\Klijent\bin\Debug\Klijent.pdb
+C:\Users\Vuk\Desktop\PROJEKAAAAT\Klijent\bin\Debug\Domain.dll
+C:\Users\Vuk\Desktop\PROJEKAAAAT\Klijent\bin\Debug\Domain.pdb
+C:\Users\Vuk\Desktop\PROJEKAAAAT\Klijent\obj\Debug\Klijent.csproj.AssemblyReference.cache
+C:\Users\Vuk\Desktop\PROJEKAAAAT\Klijent\obj\Debug\Klijent.csproj.CoreCompileInputs.cache
+C:\Users\Vuk\Desktop\PROJEKAAAAT\Klijent\obj\Debug\Klijent.csproj.Up2Date
+C:\Users\Vuk\Desktop\PROJEKAAAAT\Klijent\obj\Debug\Klijent.exe
+C:\Users\Vuk\Desktop\PROJEKAAAAT\Klijent\obj\Debug\Klijent.pdb
